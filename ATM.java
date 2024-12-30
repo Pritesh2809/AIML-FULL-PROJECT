@@ -2,36 +2,36 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ATM {
-    private static ArrayList<Customer> customers = new ArrayList<>(); // Array list for the Customer
-    private static ArrayList<Admin> admins = new ArrayList<>(); // Array list for the Admins
-    private static double atmBalance = 0.0; // for ATM balance
+    private static ArrayList<Customer> customers = new ArrayList<>(); // List to hold customer information
+    private static ArrayList<Admin> admins = new ArrayList<>(); // List to hold admin information
+    private static double atmBalance = 0.0; // To keep track of the ATM's balance
 
-    static { // Static initializer block to add a default admin
+    static { // Adding a default admin when the program starts
         admins.add(new Admin("", "")); // Adding default admin
     }
 
-    public static void mainMenu() { // Main menu method
+    public static void mainMenu() { // Displaying the main menu
         Scanner scanner = new Scanner(System.in);
 
-        while (true) { // Loop for main menu
+        while (true) { // Keep showing the main menu until the user decides to exit
             System.out.println("1. Customer");
             System.out.println("2. Admin");
             System.out.println("3. Exit");
-            int choice = scanner.nextInt(); // Input for operation
-            scanner.nextLine(); // Consume next line
+            int choice = scanner.nextInt(); // Getting the user's choice
+            scanner.nextLine(); // Consume newline character
 
-            switch (choice) { // Switch for choosing the main menu action
+            switch (choice) { // Perform actions based on the user's choice
                 case 1:
-                    Customer customer = CustomerAction.customerLogin(scanner, customers); // Method calling
-                    if (customer != null) { // Checking if customer is valid
-                        customerMenu(scanner, customer); // Customer main menu execution
+                    Customer customer = CustomerAction.customerLogin(scanner, customers); // Let the customer log in
+                    if (customer != null) { // If the customer is valid, proceed to customer menu
+                        customerMenu(scanner, customer); // Show the customer menu
                         System.out.println("Returning to main menu...");
                     }
                     break;
                 case 2:
-                    Admin admin = AdminAction.adminLogin(scanner, admins); // Calling adminLogin method
-                    if (admin != null) { // Checking if admin is valid
-                        adminMenu(scanner, admin, customers); // Display admin menu
+                    Admin admin = AdminAction.adminLogin(scanner, admins); // Let the admin log in
+                    if (admin != null) { // If the admin is valid, proceed to admin menu
+                        adminMenu(scanner, admin, customers); // Show the admin menu
                         System.out.println("Returning to main menu...");
                     }
                     break;
@@ -44,7 +44,7 @@ public class ATM {
         }
     }
 
-    public static void adminMenu(Scanner scanner, Admin admin, ArrayList<Customer> customers) { // Method to display the admin menu
+    public static void adminMenu(Scanner scanner, Admin admin, ArrayList<Customer> customers) { // Displaying the admin menu
         while (true) {
             System.out.println("1. Create a new customer account");
             System.out.println("2. Delete customer account");
@@ -53,101 +53,95 @@ public class ATM {
             System.out.println("5. View ATM balance");
             System.out.println("6. View all transactions");
             System.out.println("7. View all notes");
-            System.out.println("8. Exit to main menu");
+            System.out.println("8. Logout");
             int choice = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine(); // Consume newline character
 
-            switch (choice) { // Switch for admin menu actions
+            switch (choice) { // Perform actions based on the admin's choice
                 case 1:
-                    String createResult = AdminAction.createCustomer(scanner, customers); // Calling createCustomer method
+                    String createResult = AdminAction.createCustomer(scanner, customers); // Create a new customer account
                     System.out.println(createResult);
                     break;
                 case 2:
-                    String deleteResult = AdminAction.deleteCustomer(scanner, customers); // Calling deleteCustomer method
+                    String deleteResult = AdminAction.deleteCustomer(scanner, customers); // Delete a customer account
                     System.out.println(deleteResult);
                     break;
                 case 3:
-                    ArrayList<String> customerDetails = AdminAction.viewAllCustomers(customers); // Calling viewAllCustomers method
-                    for (String detail : customerDetails) { // Using enhanced for loop
+                    ArrayList<String> customerDetails = AdminAction.viewAllCustomers(customers); // View all customer accounts
+                    for (String detail : customerDetails) { // Print each customer detail
                         System.out.println(detail);
                     }
                     break;
                 case 4:
-                    String depositResult = AdminAction.depositToATM(scanner, admin); // Calling depositToATM method
+                    String depositResult = AdminAction.depositToATM(scanner, admin); // Deposit money to the ATM
                     System.out.println(depositResult);
                     break;
                 case 5:
-                    String atmBalance = AdminAction.viewAtmBalance(); // Calling viewAtmBalance method
+                    String atmBalance = AdminAction.viewAtmBalance(); // View the ATM balance
                     System.out.println(atmBalance);
                     break;
                 case 6:
-                    ArrayList<String> transactionsList = AdminAction.viewAllTransactions(customers, admins); // Calling viewAllTransactions method
-                    for (String transaction : transactionsList) { // Using enhanced for loop
+                    ArrayList<String> transactionsList = AdminAction.viewAllTransactions(customers, admins); // View all transactions
+                    for (String transaction : transactionsList) { // Print each transaction
                         System.out.println(transaction);
                     }
                     break;
                 case 7:
-                    String notes = AdminAction.viewAllNotes(admin); // Calling viewAllNotes method
+                    String notes = AdminAction.viewAllNotes(admin); // View all notes in the ATM
                     System.out.println(notes);
                     break;
                 case 8:
-                    return; // Exit to main menu
+                    return; // Logout and go back to the main menu
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    public static void customerMenu(Scanner scanner, Customer customer) { // Method to display the customer menu
+    public static void customerMenu(Scanner scanner, Customer customer) { // Displaying the customer menu
         while (true) {
             System.out.println("1. Check balance");
             System.out.println("2. Deposit cash");
             System.out.println("3. Withdraw cash");
             System.out.println("4. Change password");
             System.out.println("5. View transaction history");
-            System.out.println("6. Exit to main menu");
+            System.out.println("6. Logout");
             int choice = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine(); // Consume newline character
 
-            switch (choice) { // Loop for customer menu
+            switch (choice) { // Perform actions based on the customer's choice
                 case 1:
-                    customer.checkBalance(); // Check balance
+                    customer.checkBalance(); // Check the customer's balance
                     break;
                 case 2:
-                    Admin admin = AdminAction.adminLogin(scanner, admins); // Prompting for admin login
-                    if (admin != null) {
-                        CustomerAction.depositCash(scanner, customer, admin); // Method for deposit cash
-                    }
+                    CustomerAction.depositCash(scanner, customer, admins.get(0)); // Deposit cash without admin login
                     break;
                 case 3:
-                    Admin adminForWithdrawal = AdminAction.adminLogin(scanner, admins); // Prompting for admin login
-                    if (adminForWithdrawal != null) {
-                        CustomerAction.withdrawCash(scanner, customer, adminForWithdrawal); // Method for withdraw cash
-                    }
+                    CustomerAction.withdrawCash(scanner, customer, admins.get(0)); // Withdraw cash without admin login
                     break;
                 case 4:
-                    CustomerAction.changeCustomerPassword(scanner, customer); // Method for change password
+                    CustomerAction.changeCustomerPassword(scanner, customer); // Change the customer's password
                     break;
                 case 5:
-                    CustomerAction.viewTransactions(customer); // Method for view transactions
+                    CustomerAction.viewTransactions(customer); // View the customer's transaction history
                     break;
                 case 6:
-                    return; // Exit to main menu
+                    return; // Logout and go back to the main menu
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    public static double getAtmBalance() { // Method for ATM balance
+    public static double getAtmBalance() { // Get the ATM balance
         return atmBalance;
     }
 
-    public static void depositToAtm(double amount) { // Method to deposit money to the ATM
+    public static void depositToAtm(double amount) { // Deposit money to the ATM
         atmBalance += amount;
     }
 
-    public static void withdrawFromAtm(double amount) { // Method to withdraw money from the ATM
+    public static void withdrawFromAtm(double amount) { // Withdraw money from the ATM
         if (atmBalance >= amount) {
             atmBalance -= amount;
         } else {

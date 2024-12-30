@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 public class NotesAction { // NotesAction class
 
-    // Base Note class
     public static class Note {
         private int value; // Variable for note value
 
@@ -15,33 +14,6 @@ public class NotesAction { // NotesAction class
         }
     }
 
-    // Rs100Note class
-    public static class Rs100Note extends Note { // Declaring Rs100Note class that extends Note
-        public Rs100Note() { // Constructor for Rs100Note
-            super(100); // Calling constructor of superclass Note with value 100
-        }
-    }
-
-    // Rs200Note class
-    public static class Rs200Note extends Note { // Declaring Rs200Note class that extends Note
-        public Rs200Note() { // Constructor for Rs200Note
-            super(200); // Calling constructor of superclass Note with value 200
-        }
-    }
-
-    // Rs500Note class
-    public static class Rs500Note extends Note { // Declaring Rs500Note class that extends Note
-        public Rs500Note() { // Constructor for Rs500Note
-            super(500); // Calling constructor of superclass Note with value 500
-        }
-    }
-
-    // Rs2000Note class
-    public static class Rs2000Note extends Note { // Declaring Rs2000Note class that extends Note
-        public Rs2000Note() { // Constructor for Rs2000Note
-            super(2000); // Calling constructor of superclass Note with value 2000
-        }
-    }
 
     // Method to add notes
     public static void addNotes(Notes notes, int num2000, int num500, int num200, int num100) {
