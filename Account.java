@@ -1,46 +1,23 @@
-public class Account {
-    private String id;
-    private String password;
-    private double balance;
+public abstract class Account { // Declaring abstract class Account
 
-    public Account(String id, String password, double balance) {
-        this.id = id;
-        this.password = password;
-        this.balance = balance;
+    private final String id; // Declaring private final variable for account ID
+    private String password; // Declaring private variable for account password
+
+    public Account(String id, String password) { // Constructor for Account class
+        this.id = id; // Initializing account ID
+        this.password = password; // Initializing account password
     }
 
-    public String getId() {
-        return id;
+    public String getId() { // Getter method for account ID
+        return id; // Returning account ID
     }
 
-    public String getPassword() {
-        return password;
+    public boolean login(String id, String password) { // Method for login
+        return this.id.equals(id) && this.password.equals(password); // Checking if ID and password match
     }
 
-    public double getBalance() {
-        return balance;
-    }
-
-    public void checkBalance() {
-        System.out.println("Your balance is: " + balance);
-    }
-
-    public void deposit(double amount) {
-        balance += amount;
-        System.out.println("Deposit successful. New balance: " + balance);
-    }
-
-    public void withdraw(double amount) {
-        if (balance >= amount) {
-            balance -= amount;
-            System.out.println("Withdrawal successful. New balance: " + balance);
-        } else {
-            System.out.println("Insufficient balance.");
-        }
-    }
-
-    public void changePin(String newPassword) {
-        this.password = newPassword;
-        System.out.println("PIN changed successfully.");
+    public void changePassword(String newPassword) { // Method for changing password
+        this.password = newPassword; // Updating password
+        System.out.println("Password changed successfully."); // Printing password change success message
     }
 }

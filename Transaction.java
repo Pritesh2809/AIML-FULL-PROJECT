@@ -1,29 +1,15 @@
-public class Transaction {
-    private String description;
-    private double amount;
-    private double balance;
+public class Transaction { // Transaction class
+    private final String type; // Variable for transaction type
+    private final double amount; // Variable for transaction amount
+    private final double balanceAfter; // Variable for balance after transaction
 
-    public Transaction(String description, double amount, double balance) {
-        this.description = description;
-        this.amount = amount;
-        this.balance = balance;
+    public Transaction(String type, double amount, double balanceAfter) { // Constructor for Transaction class
+        this.type = type; // Initializing transaction type
+        this.amount = amount; // Initializing transaction amount
+        this.balanceAfter = balanceAfter; // Initializing balance after transaction
     }
 
-
-    public String getDescription() {
-        return description;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    @Override
-    public String toString() {
-        return  " Description: " + description + ", Amount: " + amount + ", Balance: " + balance;
+    public String toString() { // Method to convert Transaction to String
+        return "Transaction Type: " + type + ", Amount: " + amount + ", Balance After Transaction: " + balanceAfter;
     }
 }
