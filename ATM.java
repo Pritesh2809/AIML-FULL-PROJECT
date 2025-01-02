@@ -2,50 +2,58 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ATM {
-    private static ArrayList<Customer> customers = new ArrayList<>(); // List to hold customer information
-    private static ArrayList<Admin> admins = new ArrayList<>(); // List to hold admin information
-    private static double atmBalance = 0.0; // To keep track of the ATM's balance
+    private static ArrayList<Customer> customers = new ArrayList<>(); // A static list to store customer information, shared by all instances because there's a single set of customers for the ATM system
+    private static ArrayList<Admin> admins; // A static list to store admin information, shared by all instances because there's a single set of admins managing the ATM system
+    private static double atmBalance = 0.0; // A static variable to keep track of the ATM's balance, shared by all instances to ensure a single, consistent balance across the system
 
-    static { // Adding a default admin when the program starts
-        admins.add(new Admin("", "")); // Adding default admin
+    // Constructor for the ATM class
+    public ATM() {
+        admins = new ArrayList<>(); // Initialize the admins list, which is shared by all instances
+        // Add a default admin to the list
+        admins.add(new Admin("admin", "admin123")); // Add a default admin with ID "admin" and password "admin123"
     }
 
-    public static void mainMenu() { // Displaying the main menu
+    // Method to display the main menu and handle user input for navigating the ATM
+    // This method is static because it needs to be called without creating an instance of the ATM class, allowing users to access the menu directly
+    public static void mainMenu() {
+        new ATM(); // Ensure the constructor is called to initialize the admins
+
         Scanner scanner = new Scanner(System.in);
 
-        while (true) { // Keep showing the main menu until the user decides to exit
+        while (true) { // Infinite loop to continuously display the main menu until the user decides to exit
             System.out.println("1. Customer");
             System.out.println("2. Admin");
             System.out.println("3. Exit");
-            int choice = scanner.nextInt(); // Getting the user's choice
-            scanner.nextLine(); // Consume newline character
+            int choice = Integer.parseInt(scanner.nextLine()); // Get the user's choice
 
             switch (choice) { // Perform actions based on the user's choice
                 case 1:
-                    Customer customer = CustomerAction.customerLogin(scanner, customers); // Let the customer log in
-                    if (customer != null) { // If the customer is valid, proceed to customer menu
+                    Customer customer = CustomerAction.customerLogin(scanner, customers); // Allow the customer to log in
+                    if (customer != null) { // If the customer is valid, proceed to the customer menu
                         customerMenu(scanner, customer); // Show the customer menu
                         System.out.println("Returning to main menu...");
                     }
                     break;
                 case 2:
-                    Admin admin = AdminAction.adminLogin(scanner, admins); // Let the admin log in
-                    if (admin != null) { // If the admin is valid, proceed to admin menu
+                    Admin admin = AdminAction.adminLogin(scanner, admins); // Allow the admin to log in
+                    if (admin != null) { // If the admin is valid, proceed to the admin menu
                         adminMenu(scanner, admin, customers); // Show the admin menu
                         System.out.println("Returning to main menu...");
                     }
                     break;
                 case 3:
-                    System.out.println("Thank you for using the ATM. Goodbye!");
+                    System.out.println("Thank you for using the ATM. Goodbye!"); // Exit message
                     return; // Exit the main menu
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid choices
             }
         }
     }
 
-    public static void adminMenu(Scanner scanner, Admin admin, ArrayList<Customer> customers) { // Displaying the admin menu
-        while (true) {
+    // Method to display the admin menu and handle admin operations
+    // This method is static because it does not depend on instance-specific data and can be shared across all instances, ensuring consistency in admin actions
+    public static void adminMenu(Scanner scanner, Admin admin, ArrayList<Customer> customers) {
+        while (true) { // Infinite loop to continuously display the admin menu until the admin decides to log out
             System.out.println("1. Create a new customer account");
             System.out.println("2. Delete customer account");
             System.out.println("3. View all customer accounts");
@@ -54,8 +62,7 @@ public class ATM {
             System.out.println("6. View all transactions");
             System.out.println("7. View all notes");
             System.out.println("8. Logout");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
+            int choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) { // Perform actions based on the admin's choice
                 case 1:
@@ -68,7 +75,7 @@ public class ATM {
                     break;
                 case 3:
                     ArrayList<String> customerDetails = AdminAction.viewAllCustomers(customers); // View all customer accounts
-                    for (String detail : customerDetails) { // Print each customer detail
+                    for (String detail : customerDetails) { // Loop through each customer's details and print them
                         System.out.println(detail);
                     }
                     break;
@@ -82,7 +89,7 @@ public class ATM {
                     break;
                 case 6:
                     ArrayList<String> transactionsList = AdminAction.viewAllTransactions(customers, admins); // View all transactions
-                    for (String transaction : transactionsList) { // Print each transaction
+                    for (String transaction : transactionsList) { // Loop through each transaction and print it
                         System.out.println(transaction);
                     }
                     break;
@@ -91,23 +98,24 @@ public class ATM {
                     System.out.println(notes);
                     break;
                 case 8:
-                    return; // Logout and go back to the main menu
+                    return; // Logout and return to the main menu
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid choices
             }
         }
     }
 
-    public static void customerMenu(Scanner scanner, Customer customer) { // Displaying the customer menu
-        while (true) {
+    // Method to display the customer menu and handle customer operations
+    // This method is static because it does not depend on instance-specific data and can be shared across all instances, ensuring consistent customer actions
+    public static void customerMenu(Scanner scanner, Customer customer) {
+        while (true) { // Infinite loop to continuously display the customer menu until the customer decides to log out
             System.out.println("1. Check balance");
             System.out.println("2. Deposit cash");
             System.out.println("3. Withdraw cash");
             System.out.println("4. Change password");
             System.out.println("5. View transaction history");
             System.out.println("6. Logout");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
+            int choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) { // Perform actions based on the customer's choice
                 case 1:
@@ -126,26 +134,32 @@ public class ATM {
                     CustomerAction.viewTransactions(customer); // View the customer's transaction history
                     break;
                 case 6:
-                    return; // Logout and go back to the main menu
+                    return; // Logout and return to the main menu
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid choices
             }
         }
     }
 
-    public static double getAtmBalance() { // Get the ATM balance
+    // Method to get the current ATM balance
+    // This method is static because it accesses the static atmBalance variable, ensuring the balance is consistent across the system
+    public static double getAtmBalance() {
         return atmBalance;
     }
 
-    public static void depositToAtm(double amount) { // Deposit money to the ATM
-        atmBalance += amount;
+    // Method to deposit money into the ATM
+    // This method is static because it modifies the static atmBalance variable, ensuring all deposits affect the shared ATM balance
+    public static void depositToAtm(double amount) {
+        atmBalance += amount; // Increase the ATM balance by the specified amount
     }
 
-    public static void withdrawFromAtm(double amount) { // Withdraw money from the ATM
-        if (atmBalance >= amount) {
-            atmBalance -= amount;
+    // Method to withdraw money from the ATM
+    // This method is static because it modifies the static atmBalance variable, ensuring all withdrawals affect the shared ATM balance
+    public static void withdrawFromAtm(double amount) {
+        if (atmBalance >= amount) { // Check if the ATM has sufficient balance
+            atmBalance -= amount; // Decrease the ATM balance by the specified amount
         } else {
-            System.out.println("Insufficient ATM balance.");
+            System.out.println("Insufficient ATM balance."); // Print message if ATM balance is insufficient
         }
     }
 }

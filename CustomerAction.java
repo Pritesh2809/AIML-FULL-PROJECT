@@ -1,110 +1,78 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class CustomerAction { // Handling customer actions
+public class CustomerAction { // CustomerAction class for customer operations
 
-    // Customer login
+    // Method for customer login
     public static Customer customerLogin(Scanner scanner, ArrayList<Customer> customers) {
-        if (customers.isEmpty()) {
-            System.out.println("No account found. Please contact admin to create an account.");
-            return null;
-        }
+        System.out.println("Enter Customer ID: ");
+        String id = scanner.nextLine(); // Get customer ID from input
+        System.out.println("Enter Password: ");
+        String password = scanner.nextLine(); // Get customer password from input
 
-        System.out.print("Enter customer ID: ");
-        String customerId = scanner.nextLine();
-        Customer customer = findAccountById(customerId, customers);
-        if (customer == null) {
-            System.out.println("Customer ID not found. Returning to main menu.");
-            return null;
-        }
-
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        if (customer.login(customerId, password)) {
-            return customer;
-        } else {
-            System.out.println("Invalid credentials. Returning to main menu.");
-            return null;
-        }
-    }
-
-    // Deposit cash
-    public static void depositCash(Scanner scanner, Customer customer, Admin admin) {
-        System.out.print("Enter amount to deposit: ");
-        double depositAmount = scanner.nextDouble();
-        scanner.nextLine();
-
-        if (depositAmount <= 0 || depositAmount % 100 != 0) {
-            System.out.println("Invalid amount. Please enter a positive amount in multiples of 100.");
-            return;
-        }
-
-        System.out.print("Enter number of 2000 Rs notes: ");
-        int notes2000 = scanner.nextInt();
-        System.out.print("Enter number of 500 Rs notes: ");
-        int notes500 = scanner.nextInt();
-        System.out.print("Enter number of 200 Rs notes: ");
-        int notes200 = scanner.nextInt();
-        System.out.print("Enter number of 100 Rs notes: ");
-        int notes100 = scanner.nextInt();
-        scanner.nextLine();
-
-        double calculatedAmount = (notes2000 * 2000) + (notes500 * 500) + (notes200 * 200) + (notes100 * 100);
-
-        if (calculatedAmount != depositAmount) {
-            System.out.println("The total amount of notes does not match the total amount deposited. Please try again.");
-            return;
-        }
-
-        customer.deposit(depositAmount);
-        ATM.depositToAtm(depositAmount);
-        NotesAction.addNotes(admin.getNotes(), notes2000, notes500, notes200, notes100);
-        customer.addTransaction(new Transaction("Deposit", depositAmount, customer.getBalance()));
-        System.out.println("Deposit successful. New balance: " + customer.getBalance());
-    }
-
-    // Withdraw cash
-    public static void withdrawCash(Scanner scanner, Customer customer, Admin admin) {
-        System.out.print("Enter amount to withdraw: ");
-        double withdrawAmount = scanner.nextDouble();
-        scanner.nextLine();
-
-        if (customer.getBalance() >= withdrawAmount) {
-            if (NotesAction.withdrawNotes(admin.getNotes(), withdrawAmount)) {
-                customer.withdraw(withdrawAmount);
-                ATM.withdrawFromAtm(withdrawAmount);
-                customer.addTransaction(new Transaction("Withdraw", withdrawAmount, customer.getBalance()));
-                System.out.println("Withdrawal successful. New balance: " + customer.getBalance());
-            } else {
-                System.out.println("Unable to dispense the requested amount with available notes.");
-            }
-        } else {
-            System.out.println("Insufficient balance.");
-        }
-    }
-
-    // Change customer password
-    public static void changeCustomerPassword(Scanner scanner, Customer customer) {
-        System.out.print("Enter new password: ");
-        String newPassword = scanner.nextLine();
-        customer.changePassword(newPassword);
-    }
-
-    // View customer transactions
-    public static void viewTransactions(Customer customer) {
-        for (Transaction transaction : customer.getTransactions()) {
-            System.out.println(transaction);
-        }
-    }
-
-    // Helper methods
-    private static Customer findAccountById(String customerId, ArrayList<Customer> customers) {
+        // Loop through the list of customers to verify login credentials
         for (Customer customer : customers) {
-            if (customer.getId().equals(customerId)) {
-                return customer;
+            if (customer.login(id, password)) { // Check if customer ID and password match
+                System.out.println("Login successful."); // Print success message
+                return customer; // Return the logged-in customer
             }
         }
-        return null;
+
+        System.out.println("Invalid Customer ID or Password."); // Print error message if credentials are incorrect
+        return null; // Return null if login fails
+    }
+
+    // Method for customer to deposit cash
+    public static void depositCash(Scanner scanner, Customer customer, Admin admin) {
+        System.out.println("Enter amount to deposit: ");
+        double amount = Double.parseDouble(scanner.nextLine()); // Get deposit amount from input
+
+        customer.deposit(amount); // Deposit amount into customer's account
+        ATM.depositToAtm(amount); // Deposit amount into ATM balance
+        admin.addTransaction(new Transaction("Customer Deposit", amount, ATM.getAtmBalance())); // Add transaction to admin's transaction list
+
+        System.out.println("Deposit successful. Your new balance is: " + customer.getBalance()); // Print success message with new balance
+    }
+
+    // Method for customer to withdraw cash
+    public static void withdrawCash(Scanner scanner, Customer customer, Admin admin) {
+        System.out.println("Enter amount to withdraw: ");
+        double amount = Double.parseDouble(scanner.nextLine()); // Get withdrawal amount from input
+
+        // Check if the ATM has sufficient balance and can dispense the requested amount
+        if (ATM.getAtmBalance() < amount) {
+            System.out.println("Insufficient ATM balance."); // Print error message if ATM balance is insufficient
+        } else {
+            // Attempt to withdraw the notes from the ATM
+            if (NotesAction.withdrawNotes(admin.getNotes(), amount)) {
+                customer.withdraw(amount); // Withdraw amount from customer's account
+                ATM.withdrawFromAtm(amount); // Withdraw amount from ATM balance
+                admin.addTransaction(new Transaction("Customer Withdraw", amount, ATM.getAtmBalance())); // Add transaction to admin's transaction list
+
+                System.out.println("Withdrawal successful. Your new balance is: " + customer.getBalance()); // Print success message with new balance
+            } else {
+                System.out.println("ATM cannot dispense the requested amount. Please try a different amount."); // Print error message if ATM cannot dispense the requested amount
+            }
+        }
+    }
+
+    // Method for customer to change their password
+    public static void changeCustomerPassword(Scanner scanner, Customer customer) {
+        System.out.println("Enter new password: ");
+        String newPassword = scanner.nextLine(); // Get new password from input
+        customer.changePassword(newPassword); // Change customer's password
+
+        System.out.println("Password changed successfully."); // Print success message
+    }
+
+    // Method to view customer's transaction history
+    public static void viewTransactions(Customer customer) {
+        ArrayList<Transaction> transactions = customer.getTransactions(); // Get customer's transaction list
+
+        System.out.println("Transaction History: "); // Print header for transaction history
+        // Loop through each transaction and print the details
+        for (Transaction transaction : transactions) {
+            System.out.println(transaction.toString()); // Print transaction details
+        }
     }
 }

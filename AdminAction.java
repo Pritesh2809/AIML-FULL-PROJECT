@@ -1,148 +1,129 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class AdminAction { // Handling admin actions
+public class AdminAction { // AdminAction class for admin operations
 
-    // Admin login
+    // Method for admin login
     public static Admin adminLogin(Scanner scanner, ArrayList<Admin> admins) {
-        System.out.print("Enter admin ID: ");
-        String adminId = scanner.nextLine();
+        System.out.println("Enter Admin ID: ");
+        String id = scanner.nextLine(); // Get admin ID from input
+        System.out.println("Enter Password: ");
+        String password = scanner.nextLine(); // Get admin password from input
 
-        Admin admin = findAccountById(adminId, admins);
-        if (admin == null) {
-            System.out.println("Admin ID not found. Returning to main menu.");
-            return null;
-        }
-
-        for (int attempts = 3; attempts > 0; attempts--) {
-            System.out.print("Enter password (Attempts remaining: " + attempts + "): ");
-            String password = scanner.nextLine();
-
-            if (admin.login(adminId, password)) {
-                return admin;
-            } else {
-                System.out.println("Invalid password.");
+        // Loop through the list of admins to verify login credentials
+        for (Admin admin : admins) {
+            if (admin.login(id, password)) { // Check if admin ID and password match
+                System.out.println("Login successful."); // Print success message
+                return admin; // Return the logged-in admin
             }
         }
 
-        System.out.println("Too many failed attempts. Returning to main menu.");
-        return null;
+        System.out.println("Invalid Admin ID or Password."); // Print error message if credentials are incorrect
+        return null; // Return null if login fails
     }
 
-    // Create a new customer
+    // Method to create a new customer account
     public static String createCustomer(Scanner scanner, ArrayList<Customer> customers) {
-        System.out.print("Enter new customer ID: ");
-        String newCustomerId = scanner.nextLine();
-        if (isCustomerIdExist(newCustomerId, customers)) {
-            return "Customer ID already exists. Returning to main menu.";
+        System.out.println("Enter Customer ID: ");
+        String customerId = scanner.nextLine(); // Get customer ID from input
+        System.out.println("Enter Password: ");
+        String password = scanner.nextLine(); // Get customer password from input
+
+        // Check if customer ID already exists
+        if (Account.isCustomerIdExist(customerId, customers)) {
+            return "Customer ID already exists."; // Return error message if ID exists
         }
-        System.out.print("Enter new customer password: ");
-        String newCustomerPassword = scanner.nextLine();
-        customers.add(new Customer(newCustomerId, newCustomerPassword));
-        return "Customer account created successfully.";
+
+        customers.add(new Customer(customerId, password)); // Add new customer to the list
+        return "Customer account created successfully."; // Return success message
     }
 
-    // Delete a customer
+    // Method to delete a customer account
     public static String deleteCustomer(Scanner scanner, ArrayList<Customer> customers) {
-        System.out.print("Enter customer ID to delete: ");
-        String deleteCustomerId = scanner.nextLine();
-        Customer customerToDelete = findCustomerById(deleteCustomerId, customers);
-        if (customerToDelete == null) {
-            return "Customer account not found.";
-        } else {
-            customers.remove(customerToDelete);
-            return "Customer account deleted successfully.";
+        System.out.println("Enter Customer ID to delete: ");
+        String customerId = scanner.nextLine(); // Get customer ID from input
+
+        // Find the customer by ID
+        Customer customer = Account.findCustomerById(customerId, customers);
+        if (customer == null) {
+            return "Customer ID not found."; // Return error message if customer ID does not exist
         }
+
+        customers.remove(customer); // Remove the customer from the list
+        return "Customer account deleted successfully."; // Return success message
     }
 
-    // View all customers
+    // Method to view all customer accounts
     public static ArrayList<String> viewAllCustomers(ArrayList<Customer> customers) {
-        ArrayList<String> customerDetails = new ArrayList<>();
+        ArrayList<String> customerDetails = new ArrayList<>(); // List to store customer details
+        // Loop through each customer in the list
         for (Customer customer : customers) {
-            customerDetails.add("Customer ID: " + customer.getId() + ", Balance: " + customer.getBalance());
+            customerDetails.add("Customer ID: " + customer.getId() + ", Balance: " + customer.getBalance()); // Add customer details to the list
         }
-        return customerDetails;
+        return customerDetails; // Return the list of customer details
     }
 
-    // Deposit money to the ATM
+    // Method to deposit money to the ATM
     public static String depositToATM(Scanner scanner, Admin admin) {
-        System.out.print("Enter the total amount to deposit: ");
-        double totalAmount = scanner.nextDouble();
-        scanner.nextLine();
+        System.out.println("Enter number of 2000 Rs notes: ");
+        int num2000 = Integer.parseInt(scanner.nextLine()); // Get number of 2000 Rs notes from input
+        System.out.println("Enter number of 500 Rs notes: ");
+        int num500 = Integer.parseInt(scanner.nextLine()); // Get number of 500 Rs notes from input
+        System.out.println("Enter number of 200 Rs notes: ");
+        int num200 = Integer.parseInt(scanner.nextLine()); // Get number of 200 Rs notes from input
+        System.out.println("Enter number of 100 Rs notes: ");
+        int num100 = Integer.parseInt(scanner.nextLine()); // Get number of 100 Rs notes from input
 
-        if (totalAmount <= 0 || totalAmount % 100 != 0) {
-            return "Invalid amount. Please enter a positive amount in multiples of 100.";
-        }
+        // Add notes to the ATM's notes object
+        NotesAction.addNotes(admin.getNotes(), num2000, num500, num200, num100);
+        double totalAmount = num2000 * 2000 + num500 * 500 + num200 * 200 + num100 * 100; // Calculate total amount deposited
 
-        System.out.print("Enter number of 2000 Rs notes: ");
-        int notes2000 = scanner.nextInt();
-        System.out.print("Enter number of 500 Rs notes: ");
-        int notes500 = scanner.nextInt();
-        System.out.print("Enter number of 200 Rs notes: ");
-        int notes200 = scanner.nextInt();
-        System.out.print("Enter number of 100 Rs notes: ");
-        int notes100 = scanner.nextInt();
-        scanner.nextLine();
+        ATM.depositToAtm(totalAmount); // Deposit the total amount to the ATM balance
+        admin.addTransaction(new Transaction("Deposit to ATM", totalAmount, ATM.getAtmBalance())); // Add transaction to admin's transaction list
 
-        NotesAction.addNotes(admin.getNotes(), notes2000, notes500, notes200, notes100);
-        ATM.depositToAtm(totalAmount);
-        admin.addTransaction(new Transaction("Admin Deposit", totalAmount, ATM.getAtmBalance()));
-        return "Deposit successful. New ATM balance: " + ATM.getAtmBalance();
+        return "Money deposited to ATM successfully."; // Return success message
     }
 
-    // View ATM balance
+    // Method to view the ATM balance
     public static String viewAtmBalance() {
-        return "ATM balance is: " + ATM.getAtmBalance();
+        return "ATM Balance: " + ATM.getAtmBalance(); // Return the ATM balance
     }
 
-    // View all transactions
+    // Method to view all transactions
     public static ArrayList<String> viewAllTransactions(ArrayList<Customer> customers, ArrayList<Admin> admins) {
-        ArrayList<String> transactionsList = new ArrayList<>();
+        ArrayList<String> transactionsList = new ArrayList<>(); // List to store all transactions
+
+        // Loop through each customer and add their transactions to the list
         for (Customer customer : customers) {
-            transactionsList.add("Customer ID: " + customer.getId());
             for (Transaction transaction : customer.getTransactions()) {
-                transactionsList.add(transaction.toString());
+                transactionsList.add("Customer ID: " + customer.getId() + ", " + transaction.toString());
             }
         }
+
+        // Loop through each admin and add their transactions to the list
         for (Admin admin : admins) {
-            transactionsList.add("Admin ID: " + admin.getId());
             for (Transaction transaction : admin.getTransactions()) {
-                transactionsList.add(transaction.toString());
+                transactionsList.add("Admin ID: " + admin.getId() + ", " + transaction.toString());
             }
         }
-        return transactionsList;
+
+        return transactionsList; // Return the list of all transactions
     }
 
-    // View all notes in the ATM
+    // Method to view all notes in the ATM
     public static String viewAllNotes(Admin admin) {
-        return "Notes: \n" + NotesAction.notesToString(admin.getNotes());
+        return NotesAction.notesToString(admin.getNotes()); // Return the string representation of all notes in the ATM
     }
 
-    // Helper methods
-    private static boolean isCustomerIdExist(String customerId, ArrayList<Customer> customers) {
-        for (Customer customer : customers) {
-            if (customer.getId().equals(customerId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static Customer findCustomerById(String customerId, ArrayList<Customer> customers) {
-        for (Customer customer : customers) {
-            if (customer.getId().equals(customerId)) {
-                return customer;
-            }
-        }
-        return null;
-    }
-
-    private static Admin findAccountById(String adminId, ArrayList<Admin> admins) {
+    // Method to find an admin by ID
+    public static Admin findAdminById(String adminId, ArrayList<Admin> admins) {
+        // Loop through each admin in the list
         for (Admin admin : admins) {
+            // Check if the admin ID matches
             if (admin.getId().equals(adminId)) {
-                return admin;
+                return admin; // Return the admin if the ID matches
             }
         }
-        return null;
+        return null; // Return null if no admin matches the ID
     }
 }
