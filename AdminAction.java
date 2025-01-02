@@ -7,18 +7,26 @@ public class AdminAction { // AdminAction class for admin operations
     public static Admin adminLogin(Scanner scanner, ArrayList<Admin> admins) {
         System.out.println("Enter Admin ID: ");
         String id = scanner.nextLine(); // Get admin ID from input
+
+        // Check if the admin ID exists
+        Admin admin = findAdminById(id, admins);
+        if (admin == null) {
+            System.out.println("Invalid Admin ID. Returning to main menu..."); // Print error message if ID is incorrect
+            ATM.mainMenu(); // Redirect to main menu
+            return null;
+        }
+
         System.out.println("Enter Password: ");
         String password = scanner.nextLine(); // Get admin password from input
 
-        // Loop through the list of admins to verify login credentials
-        for (Admin admin : admins) {
-            if (admin.login(id, password)) { // Check if admin ID and password match
-                System.out.println("Login successful."); // Print success message
-                return admin; // Return the logged-in admin
-            }
+        // Check if the password matches
+        if (admin.login(id, password)) {
+            System.out.println("Login successful."); // Print success message
+            return admin; // Return the logged-in admin
         }
 
-        System.out.println("Invalid Admin ID or Password."); // Print error message if credentials are incorrect
+        System.out.println("Invalid Password. Returning to main menu..."); // Print error message if password is incorrect
+        ATM.mainMenu(); // Redirect to main menu
         return null; // Return null if login fails
     }
 
@@ -65,6 +73,14 @@ public class AdminAction { // AdminAction class for admin operations
 
     // Method to deposit money to the ATM
     public static String depositToATM(Scanner scanner, Admin admin) {
+        System.out.println("Enter total amount to deposit: ");
+        double totalAmount = Double.parseDouble(scanner.nextLine()); // Get the total amount from input
+
+        // Check if the total amount is divisible by 100
+        if (totalAmount % 100 != 0) {
+            return "The total amount must be divisible by 100. Please try again."; // Return error message if amount is not divisible by 100
+        }
+
         System.out.println("Enter number of 2000 Rs notes: ");
         int num2000 = Integer.parseInt(scanner.nextLine()); // Get number of 2000 Rs notes from input
         System.out.println("Enter number of 500 Rs notes: ");
@@ -74,9 +90,16 @@ public class AdminAction { // AdminAction class for admin operations
         System.out.println("Enter number of 100 Rs notes: ");
         int num100 = Integer.parseInt(scanner.nextLine()); // Get number of 100 Rs notes from input
 
+        // Calculate the total value of the notes provided
+        double calculatedAmount = (num2000 * 2000) + (num500 * 500) + (num200 * 200) + (num100 * 100);
+
+        // Check if the total amount matches the calculated amount
+        if (totalAmount != calculatedAmount) {
+            return "The total amount does not match the sum of the notes provided. Please try again."; // Return error message if amounts do not match
+        }
+
         // Add notes to the ATM's notes object
         NotesAction.addNotes(admin.getNotes(), num2000, num500, num200, num100);
-        double totalAmount = num2000 * 2000 + num500 * 500 + num200 * 200 + num100 * 100; // Calculate total amount deposited
 
         ATM.depositToAtm(totalAmount); // Deposit the total amount to the ATM balance
         admin.addTransaction(new Transaction("Deposit to ATM", totalAmount, ATM.getAtmBalance())); // Add transaction to admin's transaction list

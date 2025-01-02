@@ -24,12 +24,37 @@ public class CustomerAction { // CustomerAction class for customer operations
 
     // Method for customer to deposit cash
     public static void depositCash(Scanner scanner, Customer customer, Admin admin) {
-        System.out.println("Enter amount to deposit: ");
-        double amount = Double.parseDouble(scanner.nextLine()); // Get deposit amount from input
+        System.out.println("Enter total amount to deposit: ");
+        double totalAmount = Double.parseDouble(scanner.nextLine()); // Get the total amount from input
 
-        customer.deposit(amount); // Deposit amount into customer's account
-        ATM.depositToAtm(amount); // Deposit amount into ATM balance
-        admin.addTransaction(new Transaction("Customer Deposit", amount, ATM.getAtmBalance())); // Add transaction to admin's transaction list
+        // Check if the total amount is divisible by 100
+        if (totalAmount % 100 != 0) {
+            System.out.println("The total amount must be divisible by 100. Please try again."); // Print error message if amount is not divisible by 100
+            return;
+        }
+
+        System.out.println("Enter number of 2000 Rs notes: ");
+        int num2000 = Integer.parseInt(scanner.nextLine()); // Get number of 2000 Rs notes from input
+        System.out.println("Enter number of 500 Rs notes: ");
+        int num500 = Integer.parseInt(scanner.nextLine()); // Get number of 500 Rs notes from input
+        System.out.println("Enter number of 200 Rs notes: ");
+        int num200 = Integer.parseInt(scanner.nextLine()); // Get number of 200 Rs notes from input
+        System.out.println("Enter number of 100 Rs notes: ");
+        int num100 = Integer.parseInt(scanner.nextLine()); // Get number of 100 Rs notes from input
+
+        // Calculate the total value of the notes provided
+        double calculatedAmount = (num2000 * 2000) + (num500 * 500) + (num200 * 200) + (num100 * 100);
+
+        // Check if the total amount matches the calculated amount
+        if (totalAmount != calculatedAmount) {
+            System.out.println("The total amount does not match the sum of the notes provided. Please try again."); // Print error message if amounts do not match
+            return;
+        }
+
+        customer.deposit(totalAmount); // Deposit amount into customer's account
+        ATM.depositToAtm(totalAmount); // Deposit amount into ATM balance
+        NotesAction.addNotes(admin.getNotes(), num2000, num500, num200, num100); // Add notes to ATM's notes history
+        admin.addTransaction(new Transaction("Customer Deposit", totalAmount, ATM.getAtmBalance())); // Add transaction to admin's transaction list
 
         System.out.println("Deposit successful. Your new balance is: " + customer.getBalance()); // Print success message with new balance
     }

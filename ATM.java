@@ -10,7 +10,7 @@ public class ATM {
     public ATM() {
         admins = new ArrayList<>(); // Initialize the admins list, which is shared by all instances
         // Add a default admin to the list
-        admins.add(new Admin("admin", "admin123")); // Add a default admin with ID "admin" and password "admin123"
+        admins.add(new Admin("", "")); // Add a default admin with ID "admin" and password "admin123"
     }
 
     // Method to display the main menu and handle user input for navigating the ATM
