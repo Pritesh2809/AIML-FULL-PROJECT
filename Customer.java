@@ -1,54 +1,33 @@
-import java.util.ArrayList;
+// Class declaration that extends the Account class.
+public class Customer extends Account {
+    // Instance variable to store the balance of the customer.
+    double balance;
 
-public class Customer extends Account { // Declaring Customer class that extends Account
-    private double balance; // Declaring private variable for account balance, specific to each customer
-    private final ArrayList<Transaction> transactions; // List to store transactions, specific to each customer
-
-    // Constructor for the Customer class
+    // Constructor to initialize the Customer object with an ID and password.
     public Customer(String id, String password) {
-        super(id, password); // Calling constructor of the superclass Account to initialize id and password
-        this.balance = 0.0; // Initializing account balance to zero
-        this.transactions = new ArrayList<>(); // Initializing the transactions list to keep track of customer's transactions
+        // Calling the constructor of the superclass Account to initialize ID and password.
+        super(id, password);
+        // Initializing the balance to 0.0 when a new Customer object is created.
+        this.balance = 0.0;
     }
 
-    // Getter method for transactions
-    public ArrayList<Transaction> getTransactions() {
-        return transactions; // Returning the transactions list
-    }
-
-    // Method to add a transaction
-    public void addTransaction(Transaction transaction) {
-        transactions.add(transaction); // Adding the transaction to the list
-    }
-
-    // Method to check the balance
-    public void checkBalance() {
-        System.out.println("Your balance is: " + getBalance()); // Printing the current balance
-    }
-
-    // Method to deposit money
-    public void deposit(double amount) {
-        balance += amount; // Adding amount to account balance
-        addTransaction(new Transaction("Deposit", amount, balance)); // Adding deposit transaction to the list
-    }
-
-    // Method to withdraw money
-    public void withdraw(double amount) {
-        if (balance >= amount) { // Checking if balance is sufficient
-            balance -= amount; // Subtracting amount from balance
-            addTransaction(new Transaction("Withdraw", amount, balance)); // Adding withdraw transaction to the list
-        } else { // If balance is insufficient
-            System.out.println("Insufficient balance."); // Printing insuffisient balance message
-        }
-    }
-
-    // Getter method for account balance
+    // Getter method to retrieve the current balance of the customer.
     public double getBalance() {
-        return balance; // Returning account balance
+        // Returning the current balance.
+        return balance;
     }
 
-    // Getter method for customer ID
-    public String getId() {
-        return super.getId(); // Returning the ID from superclass Account
+    // Method to check and display the current balance of the customer.
+    public void checkBalance() {
+        // Printing the current balance to the console.
+        System.out.println("Your balance is: " + getBalance());
+    }
+
+    // Method to deposit a specified amount into the customer's account.
+    public void deposit(double amount) {
+        // Adding the specified amount to the current balance.
+        balance += amount;
+        // Logging the deposit transaction by adding it to the transaction list.
+        addTransaction(new Transaction("Deposit", amount, balance));
     }
 }

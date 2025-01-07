@@ -1,3 +1,5 @@
+import Notes.NotesAction;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,10 +11,9 @@ public class AdminAction { // AdminAction class for admin operations
         String id = scanner.nextLine(); // Get admin ID from input
 
         // Check if the admin ID exists
-        Admin admin = findAdminById(id, admins);
+        Admin admin = Admin.findAdminById(id, admins);
         if (admin == null) {
             System.out.println("Invalid Admin ID. Returning to main menu..."); // Print error message if ID is incorrect
-            ATM.mainMenu(); // Redirect to main menu
             return null;
         }
 
@@ -20,13 +21,12 @@ public class AdminAction { // AdminAction class for admin operations
         String password = scanner.nextLine(); // Get admin password from input
 
         // Check if the password matches
-        if (admin.login(id, password)) {
+        if (admin.getPassword().equals(password)) {
             System.out.println("Login successful."); // Print success message
             return admin; // Return the logged-in admin
         }
 
         System.out.println("Invalid Password. Returning to main menu..."); // Print error message if password is incorrect
-        ATM.mainMenu(); // Redirect to main menu
         return null; // Return null if login fails
     }
 
@@ -38,7 +38,7 @@ public class AdminAction { // AdminAction class for admin operations
         String password = scanner.nextLine(); // Get customer password from input
 
         // Check if customer ID already exists
-        if (Account.isCustomerIdExist(customerId, customers)) {
+        if (CustomerAction.isCustomerIdExist(customerId, customers)) {
             return "Customer ID already exists."; // Return error message if ID exists
         }
 
@@ -52,7 +52,7 @@ public class AdminAction { // AdminAction class for admin operations
         String customerId = scanner.nextLine(); // Get customer ID from input
 
         // Find the customer by ID
-        Customer customer = Account.findCustomerById(customerId, customers);
+        Customer customer = CustomerAction.findCustomerById(customerId, customers);
         if (customer == null) {
             return "Customer ID not found."; // Return error message if customer ID does not exist
         }
@@ -136,17 +136,5 @@ public class AdminAction { // AdminAction class for admin operations
     // Method to view all notes in the ATM
     public static String viewAllNotes(Admin admin) {
         return NotesAction.notesToString(admin.getNotes()); // Return the string representation of all notes in the ATM
-    }
-
-    // Method to find an admin by ID
-    public static Admin findAdminById(String adminId, ArrayList<Admin> admins) {
-        // Loop through each admin in the list
-        for (Admin admin : admins) {
-            // Check if the admin ID matches
-            if (admin.getId().equals(adminId)) {
-                return admin; // Return the admin if the ID matches
-            }
-        }
-        return null; // Return null if no admin matches the ID
     }
 }

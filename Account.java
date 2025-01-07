@@ -1,19 +1,46 @@
 import java.util.ArrayList;
 
-public abstract class Account { // Declaring abstract class Account
+public class Account { // Declaring POJO Account class
 
-    private final String id; // Declaring private final variable for account ID, ensuring it's immutable after initialization
-    private String password; // Declaring private variable for account password, allowing it to be changed
+    private String id; // Declaring private variable for account ID
+    private String password; // Declaring private variable for account password
+    private ArrayList<Transaction> transactions; // List to store transactions
 
-    // Constructor for the Account class
+    // Parameterized constructor
     public Account(String id, String password) {
-        this.id = id; // Initializing account ID, which should remain constant
+        this.id = id; // Initializing account ID
         this.password = password; // Initializing account password
+        this.transactions = new ArrayList<>(); // Initializing the transactions list to keep track of account's transactions
     }
 
     // Getter method for account ID
     public String getId() {
         return id; // Returning account ID
+    }
+
+    // Setter method for account ID
+    public void setId(String id) {
+        this.id = id; // Setting account ID
+    }
+
+    // Getter method for account password
+    public String getPassword() {
+        return password; // Returning account password
+    }
+
+    // Setter method for account password
+    public void setPassword(String password) {
+        this.password = password; // Setting account password
+    }
+
+    // Getter method for transactions
+    public ArrayList<Transaction> getTransactions() {
+        return transactions; // Returning the transactions list
+    }
+
+    // Method to add a transaction
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction); // Adding the transaction to the list
     }
 
     // Method for login
@@ -22,45 +49,12 @@ public abstract class Account { // Declaring abstract class Account
         return this.id.equals(id) && this.password.equals(password);
     }
 
-    // Method for changing password
-    public void changePassword(String newPassword) {
-        this.password = newPassword; // Updating the account password
-        System.out.println("Password changed successfully."); // Printing password change success message
-    }
-
-    // Method to check if a customer ID exists in the list of customers
-    public static boolean isCustomerIdExist(String customerId, ArrayList<Customer> customers) {
-        // Loop through each customer in the list
-        for (Customer customer : customers) {
-            // Check if the customer ID matches
-            if (customer.getId().equals(customerId)) {
-                return true; // Return true if the ID exists
-            }
+    // Method to display transactions
+    public void displayTransactions() {
+        System.out.println("Transaction History: "); // Print header for transaction history
+        // Loop through each transaction and print the details
+        for (Transaction transaction : transactions) {
+            System.out.println(transaction.toString()); // Print transaction details
         }
-        return false; // Return false if the ID does not exist
-    }
-
-    // Method to find a customer by ID
-    public static Customer findCustomerById(String customerId, ArrayList<Customer> customers) {
-        // Loop through each customer in the list
-        for (Customer customer : customers) {
-            // Check if the customer ID matches
-            if (customer.getId().equals(customerId)) {
-                return customer; // Return the customer if the ID matches
-            }
-        }
-        return null; // Return null if no customer matches the ID
-    }
-
-    // Method to find an admin by ID
-    public static Admin findAdminById(String adminId, ArrayList<Admin> admins) {
-        // Loop through each admin in the list
-        for (Admin admin : admins) {
-            // Check if the admin ID matches
-            if (admin.getId().equals(adminId)) {
-                return admin; // Return the admin if the ID matches
-            }
-        }
-        return null; // Return null if no admin matches the ID
     }
 }

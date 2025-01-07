@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ATM {
-    private static ArrayList<Customer> customers = new ArrayList<>(); // A static list to store customer information, shared by all instances because there's a single set of customers for the ATM system
-    private static ArrayList<Admin> admins; // A static list to store admin information, shared by all instances because there's a single set of admins managing the ATM system
-    private static double atmBalance = 0.0; // A static variable to keep track of the ATM's balance, shared by all instances to ensure a single, consistent balance across the system
+    private static ArrayList<Customer> customers = new ArrayList<>(); // A static list to store customer information, there's a single set of customers for the ATM system
+    private static ArrayList<Admin> admins; // A static list to store admin information, there's a single set of admins managing the ATM system
+    private static double atmBalance = 0.0; // A static variable to keep track of the ATM's balance
 
     // Constructor for the ATM class
     public ATM() {

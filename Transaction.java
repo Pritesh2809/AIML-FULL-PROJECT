@@ -1,34 +1,23 @@
-// Transaction class to represent a banking transaction
+// Class declaration for representing a transaction.
 public class Transaction {
-    private String type; // Variable for transaction type
-    private double amount; // Variable for transaction amount
-    private double balanceAfter; // Variable for balance after transaction
+    // Private instance variables to store the transaction type, amount, and balance after the transaction.
+    private String type;
+    private double amount;
+    private double balanceAfterTransaction;
 
-    // Constructor for Transaction class
-    public Transaction(String type, double amount, double balanceAfter) {
-        this.type = type; // Initializing transaction type (e.g., "Deposit" or "Withdraw")
-        this.amount = amount; // Initializing transaction amount
-        this.balanceAfter = balanceAfter; // Initializing balance after transaction
+    // Constructor to initialize a Transaction object with type, amount, and balance after the transaction.
+    public Transaction(String type, double amount, double balanceAfterTransaction) {
+        this.type = type; // Initializing the type of transaction (e.g., "Deposit", "Withdraw").
+        this.amount = amount; // Initializing the amount involved in the transaction.
+        this.balanceAfterTransaction = balanceAfterTransaction; // Initializing the balance after the transaction is completed.
     }
 
-    // Getter method for transaction type
-    public String getType() {
-        return type; // Returning transaction type
-    }
-
-    // Getter method for transaction amount
-    public double getAmount() {
-        return amount; // Returning transaction amount
-    }
-
-    // Getter method for balance after transaction
-    public double getBalanceAfter() {
-        return balanceAfter; // Returning balance after transaction
-    }
-
-    // Method to convert Transaction object to String representation
-
+    // Overriding the toString method to provide a custom string representation of the Transaction object.
     public String toString() {
-        return "Transaction Type: " + type + ", Amount: " + amount + ", Balance After Transaction: " + balanceAfter; // Returning string representation of the transaction
+        return "Transaction{" +
+                "type='" + type + '\'' + // Including the type of transaction in the string representation.
+                ", amount=" + amount + // Including the amount involved in the transaction in the string representation.
+                ", balanceAfterTransaction=" + balanceAfterTransaction + // Including the balance after the transaction in the string representation.
+                '}'; // Closing the string representation.
     }
 }
